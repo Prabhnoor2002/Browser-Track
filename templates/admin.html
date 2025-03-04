@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - Tab Tracker</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            width: 100%;
+        }
+        h1 {
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        table {
+            margin-top: 20px;
+        }
+        th, td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        a {
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="text-center">📊 Tracked Tabs (Live)</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>📅 Timestamp</th>
+                        <th>📝 Title</th>
+                        <th>🔗 URL</th>
+                    </tr>
+                </thead>
+                <tbody id="tabsTableBody">
+                    <tr><td colspan="3">⏳ Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        async function loadTabs() {
+            try {
+                const response = await fetch('/get_tabs_data');
+                const tabs = await response.json();
+
+                const tableBody = document.getElementById('tabsTableBody');
+                tableBody.innerHTML = '';
+
+                if (tabs.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="3">❌ No data found</td></tr>';
+                    return;
+                }
+
+                tabs.forEach(tab => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${tab.timestamp}</td>
+                        <td>${tab.title}</td>
+                        <td><a href="${tab.url}" target="_blank">${tab.url}</a></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching tabs:', error);
+                document.getElementById('tabsTableBody').innerHTML = '<tr><td colspan="3">⚠️ Error loading data</td></tr>';
+            }
+        }
+
+        loadTabs();
+        setInterval(loadTabs, 5000);  // Refresh every 5 seconds
+    </script>
+
+</body>
+</html>
