@@ -5,9 +5,8 @@ import webbrowser
 import os
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # Needed for session management
+app.secret_key = 'your_secret_key_here'  
 
-# Hardcoded credentials
 users = {
     'admin': 'admin123',
     'user': 'user123'
